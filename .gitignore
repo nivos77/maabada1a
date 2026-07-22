@@ -1,0 +1,11 @@
+db/
+incremental_db/
+output_files/
+simulation/
+*.qws
+*.rpt
+*.smsg
+*.summary
+*.cdf
+*.sof
+*.pof
