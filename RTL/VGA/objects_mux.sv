@@ -1,33 +1,31 @@
 
-// (c) Technion IIT, Department of Electrical Engineering 2025 
-//-- Alex Grinshpun Apr 2017
-//-- Dudy Nov 13 2017
-// SystemVerilog version Alex Grinshpun May 2018
-// coding convention dudy December 2018
 
-//-- Eyal Lev 31 Jan 2021
+// (c) Technion IIT, Department of Electrical Engineering 2026
+// Objects Mux - Display Priority Controller (Updated with Portals)
 
-module	objects_mux	(	
-//		--------	Clock Input	 	
+
+
+module objects_mux (	
 					input		logic	clk,
 					input		logic	resetN,
-		   // smiley 
-					input		logic	smileyDrawingRequest, // two set of inputs per unit
-					input		logic	[7:0] smileyRGB, 
-					     
-		  // add the box here 
-					input logic boxDrawingRequest,
-					input logic [7:0] boxRGB,
-			  
-		  ////////////////////////
-		  // background 
-					input    logic HartDrawingRequest, // box of numbers
-					input		logic	[7:0] hartRGB,   
-					input		logic	[7:0] backGroundRGB, 
-					input		logic	BGDrawingRequest, 
-					input		logic	[7:0] RGB_MIF, 
-			  
-				   output	logic	[7:0] RGBOut
+					input		logic	smileyDrawingRequest,
+					input		logic	[7:0] smileyRGB,
+					input		logic	boxDrawingRequest,
+					input		logic	[7:0] boxRGB,
+					input		logic	specialDrawingRequest,
+					input		logic	[7:0] specialRGB,
+					input		logic	portal1DrawingRequest,
+					input		logic	[7:0] portal1RGB,
+					input		logic	portal2DrawingRequest,
+					input		logic	[7:0] portal2RGB,
+					input		logic	HartDrawingRequest,
+					input		logic	[7:0] hartRGB,
+					input		logic	[7:0] backGroundRGB,
+					input		logic	BGDrawingRequest,
+					input		logic	[7:0] RGB_MIF,
+					
+					
+					output	logic	[7:0] RGBOut
 );
 
 always_ff@(posedge clk or negedge resetN)
@@ -37,21 +35,34 @@ begin
 	end
 	
 	else begin
-		if (smileyDrawingRequest == 1'b1 )   
-			RGBOut <= smileyRGB;  //first priority 
-		 
-//--- add logic for box here ------------------------------------------------------		
+		if (smileyDrawingRequest == 1'b1)   
+			RGBOut <= smileyRGB;
+			
+		else if (specialDrawingRequest == 1'b1)
+			RGBOut <= specialRGB;
+			
 		else if (boxDrawingRequest == 1'b1)
 			RGBOut <= boxRGB;
-//---------------------------------------------------------------------------------		
- 		else if (HartDrawingRequest == 1'b1)
-				RGBOut <= hartRGB;
+			
+		else if (portal1DrawingRequest == 1'b1)
+			RGBOut <= portal1RGB;
+			
+		else if (portal2DrawingRequest == 1'b1)
+			RGBOut <= portal2RGB;
+			
+		else if (HartDrawingRequest == 1'b1)
+			RGBOut <= hartRGB;
+			
 		else if (BGDrawingRequest == 1'b1)
-				RGBOut <= backGroundRGB ;
-		else RGBOut <= RGB_MIF ;// last priority 
-		end ; 
-	end
+			RGBOut <= backGroundRGB;
+			
+		else 
+			RGBOut <= RGB_MIF;
+	end 
+end
 
 endmodule
+
+
 
 

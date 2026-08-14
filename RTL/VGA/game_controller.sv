@@ -1,3 +1,4 @@
+
 module game_controller (
     input  logic clk,
     input  logic resetN,
@@ -13,13 +14,20 @@ module game_controller (
     input  logic [1:0] special_type_in,
     input  logic drawing_request_portal1,
     input  logic drawing_request_portal2,
-    input  logic signed [11:0] head_x,
-    input  logic signed [11:0] head_y,
-    input  logic signed [11:0] apple_x,
-    input  logic signed [11:0] apple_y,
+    input  logic signed [10:0] head_x,
+    input  logic signed [10:0] head_y,
+    input  logic signed [10:0] apple_x,
+    input  logic signed [10:0] apple_y,
+    input  logic signed [10:0] special_apple_x,
+    input  logic signed [10:0] special_apple_y,
+    input  logic signed [10:0] portal1_x,
+    input  logic signed [10:0] portal1_y,
+    input  logic signed [10:0] portal2_x,
+    input  logic signed [10:0] portal2_y,
 
     output logic collision,
     output logic SingleHitPulse,
+    output logic SpecialHitPulse,
     output logic [2:0] game_state_out,
     output logic [2:0] current_level,
     output logic [1:0] current_lives,
@@ -38,7 +46,6 @@ module game_controller (
     output int         add_tail_amount
 );
 
-    // --- COLLISION DETECTION ---
     logic collision_wall, collision_body, collision_tree;
     logic collision_bad;
     logic collision_regular_apple, collision_special_apple;
@@ -48,8 +55,7 @@ module game_controller (
     assign collision_body = (drawing_request_smiley && drawing_request_number);
     assign collision_tree = (drawing_request_smiley && drawing_request_tree);
 
-    // assign collision_bad = (collision_wall || collision_body || collision_tree);
-	 assign collision_bad = 1'b0; // GOD MODE 
+    assign collision_bad = 1'b0; 
     assign collision_regular_apple = (drawing_request_smiley && drawing_request_apple);
     assign collision_special_apple = (drawing_request_smiley && drawing_request_special);
 
@@ -58,7 +64,6 @@ module game_controller (
 
     assign collision = collision_bad || collision_regular_apple || collision_special_apple || collision_p1 || collision_p2;
 
-    // --- LATCHES ---
     logic bad_hit_detected;
     logic apple_hit_detected;
     logic special_hit_detected;
@@ -80,24 +85,22 @@ module game_controller (
                 p1_hit_detected <= 0;
                 p2_hit_detected <= 0;
             end else begin
-                if (collision_bad)           bad_hit_detected <= 1;
+                if (collision_bad)            bad_hit_detected <= 1;
                 if (collision_regular_apple) apple_hit_detected <= 1;
                 if (collision_special_apple) special_hit_detected <= 1;
-                if (collision_p1)            p1_hit_detected <= 1;
-                if (collision_p2)            p2_hit_detected <= 1;
+                if (collision_p1)             p1_hit_detected <= 1;
+                if (collision_p2)             p2_hit_detected <= 1;
             end
         end
     end
 
-    // --- BITE ANIMATION TRIGGER ---
-    logic signed [11:0] diff_x;
-    logic signed [11:0] diff_y;
+    logic signed [10:0] diff_x;
+    logic signed [10:0] diff_y;
     assign diff_x = head_x - apple_x;
     assign diff_y = head_y - apple_y;
 
     assign bite_animation_trigger = ((diff_x > -32 && diff_x < 32) && (diff_y > -32 && diff_y < 32)) ? 1'b1 : 1'b0;
 
-    // --- FSM STATES ---
     localparam INIT_ST      = 3'b000;
     localparam PLAY_ST      = 3'b001;
     localparam DIED_ST      = 3'b010;
@@ -106,7 +109,6 @@ module game_controller (
 
     logic [2:0] state;
 
-    
     int apples_eaten;
     int total_score;
     int apple_timer;  
@@ -122,7 +124,6 @@ module game_controller (
 
     assign night_mode_active = (current_level == 3'd4) ? 1'b1 : 1'b0;
 
-    
     always_ff @(posedge clk or negedge resetN) begin
         if (!resetN) begin
             state <= INIT_ST;
@@ -132,7 +133,7 @@ module game_controller (
             total_score <= 0;
             high_score_out <= 0; 
             apple_timer <= 0;
-            portal_timer <= 0;
+            portal_timer <= PORTAL_MAX_TIME;
             move_speed <= 16;
             reset_player_pos <= 1;
             reset_tail <= 1;
@@ -141,6 +142,7 @@ module game_controller (
             special_timer <= 0;
             num_trees <= 0;
             SingleHitPulse <= 0;
+            SpecialHitPulse <= 0;
             game_state_out <= 3'b000;
             score_out <= 0;
             refresh_portals <= 0;
@@ -152,6 +154,7 @@ module game_controller (
         else if (startOfFrame) begin
             
             SingleHitPulse <= 0;
+            SpecialHitPulse <= 0;
             add_tail_amount <= 0;
             reset_player_pos <= 0;
             reset_tail <= 0;
@@ -215,15 +218,19 @@ module game_controller (
                     end
 
                     if (portal_timer > 0) begin
-                        portal_timer--;
+                        portal_timer <= portal_timer - 1;
                     end else begin
-                        portal_timer <= PORTAL_MAX_TIME;
-                        refresh_portals <= 1; 
+                        if (teleport_to_p1 == 1'b0 && teleport_to_p2 == 1'b0) begin
+                            portal_timer <= PORTAL_MAX_TIME;
+                            refresh_portals <= 1;
+                        end else begin
+                            portal_timer <= 0;
+                        end
                     end
                     
                     if (special_apple_active) begin
                         if (special_timer > 0) begin
-                            special_timer--;
+                            special_timer <= special_timer - 1;
                         end else begin
                             special_apple_active <= 0; 
                         end
@@ -262,6 +269,7 @@ module game_controller (
                         apples_eaten <= apples_eaten + 1;
                         add_tail_amount <= 1; 
                         apple_timer <= 0; 
+                        SingleHitPulse <= 1;
                         
                         if ((total_score + points_to_add) >= 120) begin 
                             current_level <= 5; move_speed <= 4; num_trees <= 5; 
@@ -279,17 +287,19 @@ module game_controller (
                         if ((apples_eaten + 1) % 5 == 0) begin
                             special_apple_active <= 1;
                             special_timer <= SPECIAL_MAX_TIME;
+                            SpecialHitPulse <= 1;
                         end
                     end
                     else if (special_hit_detected && special_apple_active) begin
                         special_apple_active <= 0; 
+                        SpecialHitPulse <= 1;
                         
                         if (special_type_in == 2'b00) begin
                             add_tail_amount <= -3; 
                             total_score <= total_score + 15; 
                         end else if (special_type_in == 2'b01) begin
                             add_tail_amount <= 3; 
-                        end else if (special_type_in == 2'b10) begin
+                        end else if(special_type_in == 2'b10) begin
                             reset_tail <= 1; 
                             total_score <= total_score + 20;
                         end
@@ -299,7 +309,7 @@ module game_controller (
                 DIED_ST: begin
                     reset_player_pos <= 1;
                     apple_timer <= 0;
-						  if (action_key) begin
+                    if (action_key) begin
                         state <= PLAY_ST;
                     end
                 end
