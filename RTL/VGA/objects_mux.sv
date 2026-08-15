@@ -10,8 +10,10 @@ module objects_mux (
 					input		logic	resetN,
 					input		logic	smileyDrawingRequest,
 					input		logic	[7:0] smileyRGB,
-					input		logic	boxDrawingRequest,
-					input		logic	[7:0] boxRGB,
+					input  		logic 	bodyDrawingRequest,
+   					 input  	logic 	[7:0] bodyRGB,
+					input		logic	appleDrawingRequest,
+					input		logic	[7:0] appleRGB,
 					input		logic	specialDrawingRequest,
 					input		logic	[7:0] specialRGB,
 					input		logic	portal1DrawingRequest,
@@ -38,11 +40,14 @@ begin
 		if (smileyDrawingRequest == 1'b1)   
 			RGBOut <= smileyRGB;
 			
+		else if (bodyDrawingRequest == 1'b1)
+			RGBOut <= bodyRGB;
+			
 		else if (specialDrawingRequest == 1'b1)
 			RGBOut <= specialRGB;
 			
-		else if (boxDrawingRequest == 1'b1)
-			RGBOut <= boxRGB;
+		else if (appleDrawingRequest == 1'b1)
+			RGBOut <= appleRGB;
 			
 		else if (portal1DrawingRequest == 1'b1)
 			RGBOut <= portal1RGB;

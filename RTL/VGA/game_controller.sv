@@ -43,7 +43,9 @@ module game_controller (
     output logic       teleport_to_p1,
     output logic       teleport_to_p2,
     output int         move_speed,
-    output int         add_tail_amount
+    output int         add_tail_amount,
+    output logic       shift_pulse,
+    output logic [4:0] snake_length
 );
 
     logic collision_wall, collision_body, collision_tree;
@@ -330,5 +332,49 @@ module game_controller (
             game_state_out <= state;
         end
     end
+//shift pulse generation logic
+    logic signed [10:0] last_saved_x;
+    logic signed [10:0] last_saved_y;
+    logic [10:0] dist_x;
+    logic [10:0] dist_y;
+    //absolute distance since last save of head position
+    assign dist_x = (head_x > last_saved_x) ? (head_x - last_saved_x) : (last_saved_x - head_x);
+    assign dist_y = (head_y > last_saved_y) ? (head_y - last_saved_y) : (last_saved_y - head_y);
+    always_ff @(posedge clk or negedge resetN) begin
+        if (!resetN) begin
+            snake_length <= 2;
+            last_saved_x <= 0;
+            last_saved_y <= 0;
+        end else begin
+            shift_pulse <= 0;
 
+            if (state == INIT_ST) begin
+                snake_length <= 2;
+            end else if (add_tail_amount != 0 && startOfFrame) begin
+                if (snake_length + add_tail_amount > 16)
+                    snake_length <= 16;
+                else if (snake_length + add_tail_amount < 2)
+                    snake_length <= 2;
+                else
+                    snake_length <= snake_length + add_tail_amount;
+            end
+
+            if (reset_player_pos) begin
+                last_saved_x <= head_x;
+                last_saved_y <= head_y;
+            end else if (state == PLAY_ST && startOfFrame) begin
+                if ((dist_x + dist_y) >= 32) begin//checks if the head has moved enough to trigger a shift pulse
+                    shift_pulse <= 1'b1;
+                    //determine which direction the head has moved more in order to update the last saved position accordingly
+                    if (dist_x >= 32) begin
+                        last_saved_x <= (head_x > last_saved_x) ? (last_saved_x + 11'd32) : (last_saved_x - 11'd32);//updating the last saved position to the new head position based on the direction of movement module 32!
+                        last_saved_y <= head_y;
+                    end else begin
+                        last_saved_y <= (head_y > last_saved_y) ? (last_saved_y + 11'd32) : (last_saved_y - 11'd32);
+                        last_saved_x <= head_x;
+                    end
+                end
+            end
+        end
+    end
 endmodule

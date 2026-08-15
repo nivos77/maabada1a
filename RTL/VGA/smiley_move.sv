@@ -29,8 +29,9 @@ module smiley_move (
                     input  logic teleport_to_p1,
                     input  logic teleport_to_p2,
                     input  int   move_speed,        // Dynamic speed from FSM
+                    input  logic shift_pulse,             // pulse to shift the snake body
                     
-                    
+
                     output logic signed [10:0] topLeftX, 
                     output logic signed [10:0] topLeftY,
                     output logic [1:0] direction
@@ -79,7 +80,7 @@ int Yspeed ;
 int Xposition ; //position   
 int Yposition ;  
 int current_speed;
- logic [4:0] hit_reg = 5'b00000;
+logic [4:0] hit_reg = 5'b00000;
  
 always_ff @(posedge clk or negedge resetN)
 begin : fsm_sync_proc
@@ -88,7 +89,6 @@ begin : fsm_sync_proc
         SM_Motion <= IDLE_ST ; 
         Xspeed <= 0 ; 
         Yspeed <= 0 ; 
-        
         Xposition <= INITIAL_X * FIXED_POINT_MULTIPLIER ; 
         Yposition <= INITIAL_Y * FIXED_POINT_MULTIPLIER ; 
         hit_reg <= 5'b0 ;   
