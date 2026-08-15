@@ -54,7 +54,7 @@ begin
 			RGBOut <= hartRGB;
 			
 		else if (BGDrawingRequest == 1'b1)
-			RGBOut <= backGroundRGB;
+			RGBOut <= RGB_MIF;
 			
 		else 
 			RGBOut <= RGB_MIF;

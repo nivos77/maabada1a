@@ -16,6 +16,10 @@ module smileyBitMap (
                     output logic [2:0] HitEdgeCode  
  ) ;
 
+// const logic [1:0] DIR_RIGHT = 2'b00;
+// const logic [1:0] DIR_LEFT  = 2'b01;
+// const logic [1:0] DIR_UP    = 2'b10;
+// const logic [1:0] DIR_DOWN  = 2'b11;
 
 localparam  int OBJECT_NUMBER_OF_Y_BITS = 5;
 localparam  int OBJECT_NUMBER_OF_X_BITS = 5;
@@ -30,20 +34,20 @@ logic [10:0] mapped_Y;
 always_comb begin
     case(direction)
         2'b00: begin 
-            mapped_X = 11'd31 - offsetY;
+            mapped_X = 11'd31 -offsetY;
             mapped_Y = offsetX;
         end
         2'b01: begin 
             mapped_X = offsetY;
-            mapped_Y = 11'd31 - offsetX;
+            mapped_Y = 11'd31 -offsetX;
         end
         2'b10: begin
-            mapped_X = offsetX;
-            mapped_Y = offsetY;
+            mapped_X = 11'd31 -offsetX;
+            mapped_Y = 11'd31 -offsetY;
         end
         2'b11: begin
             mapped_X = offsetX;
-            mapped_Y = 11'd31 - offsetY;
+            mapped_Y = offsetY;
         end
         default: begin
             mapped_X = offsetX;
@@ -57,8 +61,8 @@ logic [10:0] address;
 logic [10:0] HitCodeX ; 
 logic [10:0] HitCodeY ; 
 
-assign HitCodeX = mapped_X; 
-assign HitCodeY = mapped_Y;     
+assign HitCodeX = mapped_X >> 1; 
+assign HitCodeY = mapped_Y >> 1;
 assign address = (mapped_Y * OBJECT_WIDTH_X + mapped_X);
 
 
@@ -122,6 +126,7 @@ begin
     end
 end
 
+//assign drawingRequest = InsideRectangle;
 assign drawingRequest = (RGBout != TRANSPARENT_ENCODING ) ? 1'b1 : 1'b0 ; // get optional transparent command from the bitmpap   
 
 endmodule

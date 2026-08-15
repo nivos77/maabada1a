@@ -444,7 +444,7 @@ agreement for further details.
 	)
 )
 (symbol
-	(rect 552 440 792 712)
+	(rect 552 432 792 704)
 	(text "smiley_move" (rect 5 0 72 12)(font "Arial" ))
 	(text "inst" (rect 8 256 25 268)(font "Arial" ))
 	(port
@@ -614,12 +614,12 @@ agreement for further details.
 	(drawing
 		(rectangle (rect 16 16 224 256))
 	)
-	(annotation_block (parameter)(rect 552 288 809 402))
+	(annotation_block (parameter)(rect 552 280 809 394))
 )
 (symbol
-	(rect 952 376 1176 520)
+	(rect 928 368 1152 544)
 	(text "square_object" (rect 5 0 73 12)(font "Arial" ))
-	(text "inst6" (rect 8 128 31 140)(font "Arial" ))
+	(text "inst6" (rect 8 160 31 172)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -663,31 +663,38 @@ agreement for further details.
 		(line (pt 0 112)(pt 16 112)(line_width 3))
 	)
 	(port
+		(pt 0 128)
+		(input)
+		(text "enable" (rect 0 0 31 12)(font "Arial" ))
+		(text "enable" (rect 21 123 52 135)(font "Arial" ))
+		(line (pt 0 128)(pt 16 128))
+	)
+	(port
 		(pt 224 32)
 		(output)
 		(text "offsetX[10..0]" (rect 0 0 68 12)(font "Arial" ))
-		(text "offsetX[10..0]" (rect 146 27 214 39)(font "Arial" ))
+		(text "offsetX[10..0]" (rect 146 27 203 39)(font "Arial" ))
 		(line (pt 224 32)(pt 208 32)(line_width 3))
 	)
 	(port
 		(pt 224 48)
 		(output)
 		(text "offsetY[10..0]" (rect 0 0 70 12)(font "Arial" ))
-		(text "offsetY[10..0]" (rect 144 43 214 55)(font "Arial" ))
+		(text "offsetY[10..0]" (rect 144 43 203 55)(font "Arial" ))
 		(line (pt 224 48)(pt 208 48)(line_width 3))
 	)
 	(port
 		(pt 224 64)
 		(output)
 		(text "drawingRequest" (rect 0 0 77 12)(font "Arial" ))
-		(text "drawingRequest" (rect 138 59 215 71)(font "Arial" ))
+		(text "drawingRequest" (rect 138 59 203 71)(font "Arial" ))
 		(line (pt 224 64)(pt 208 64))
 	)
 	(port
 		(pt 224 80)
 		(output)
 		(text "RGBout[7..0]" (rect 0 0 64 12)(font "Arial" ))
-		(text "RGBout[7..0]" (rect 149 75 213 87)(font "Arial" ))
+		(text "RGBout[7..0]" (rect 149 75 203 87)(font "Arial" ))
 		(line (pt 224 80)(pt 208 80)(line_width 3))
 	)
 	(parameter
@@ -706,9 +713,24 @@ agreement for further details.
 		""
 		(type "PARAMETER_UNSIGNED_BIN")	)
 	(drawing
-		(rectangle (rect 16 16 208 128))
+		(rectangle (rect 16 16 208 160))
 	)
-	(annotation_block (parameter)(rect 952 528 1180 604))
+	(annotation_block (parameter)(rect 928 520 1156 596))
+)
+(symbol
+	(rect 880 488 912 504)
+	(text "VCC" (rect 7 0 27 10)(font "Arial" (font_size 6)))
+	(text "inst2" (rect 3 5 25 22)(font "Intel Clear" )(invisible))
+	(port
+		(pt 16 16)
+		(output)
+		(text "1" (rect 19 7 24 19)(font "Courier New" (bold))(invisible))
+		(text "1" (rect 19 7 24 19)(font "Courier New" (bold))(invisible))
+		(line (pt 16 16)(pt 16 8))
+	)
+	(drawing
+		(line (pt 8 8)(pt 24 8))
+	)
 )
 (connector
 	(text "pixelY[10..0]" (rect 402 392 461 409)(font "Intel Clear" ))
@@ -721,14 +743,6 @@ agreement for further details.
 	(pt 392 360)
 	(pt 488 360)
 	(bus)
-)
-(connector
-	(pt 392 488)
-	(pt 552 488)
-)
-(connector
-	(pt 392 472)
-	(pt 552 472)
 )
 (connector
 	(text "clk" (rect 1208 360 1222 377)(font "Intel Clear" ))
@@ -746,49 +760,8 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(text "<<__$DEF_ALIAS1238>>" (rect 472 520 590 537)(font "Intel Clear" )(invisible))
-	(pt 392 536)
-	(pt 552 536)
-)
-(connector
-	(text "<<__$DEF_ALIAS1240>>" (rect 453 504 571 521)(font "Intel Clear" )(invisible))
-	(pt 552 520)
-	(pt 392 520)
-)
-(connector
-	(text "<<__$DEF_ALIAS1242>>" (rect 472 488 590 505)(font "Intel Clear" )(invisible))
-	(pt 392 504)
-	(pt 552 504)
-)
-(connector
-	(pt 392 552)
-	(pt 552 552)
-)
-(connector
-	(pt 392 568)
-	(pt 552 568)
-)
-(connector
-	(pt 392 600)
-	(pt 552 600)
-)
-(connector
-	(pt 392 584)
-	(pt 552 584)
-)
-(connector
 	(pt 1576 408)
 	(pt 1576 824)
-	(bus)
-)
-(connector
-	(pt 792 504)
-	(pt 880 504)
-	(bus)
-)
-(connector
-	(pt 880 664)
-	(pt 880 504)
 	(bus)
 )
 (connector
@@ -808,88 +781,6 @@ agreement for further details.
 	(bus)
 )
 (connector
-	(pt 144 616)
-	(pt 144 824)
-	(bus)
-)
-(connector
-	(pt 144 616)
-	(pt 552 616)
-	(bus)
-)
-(connector
-	(pt 392 648)
-	(pt 552 648)
-)
-(connector
-	(pt 392 664)
-	(pt 552 664)
-)
-(connector
-	(pt 552 632)
-	(pt 400 632)
-)
-(connector
-	(pt 552 680)
-	(pt 408 680)
-	(bus)
-)
-(connector
-	(text "smileyOffsetX[10..0]" (rect 1173 392 1270 409)(font "Intel Clear" ))
-	(pt 1256 408)
-	(pt 1176 408)
-	(bus)
-)
-(connector
-	(text "smileyOffsety[10..0]" (rect 1170 408 1266 425)(font "Intel Clear" ))
-	(pt 1256 424)
-	(pt 1176 424)
-	(bus)
-)
-(connector
-	(text "smileyRecDR" (rect 1184 424 1247 441)(font "Intel Clear" ))
-	(pt 1256 440)
-	(pt 1176 440)
-)
-(connector
-	(pt 784 472)
-	(pt 792 472)
-	(bus)
-)
-(connector
-	(pt 784 488)
-	(pt 792 488)
-	(bus)
-)
-(connector
-	(text "clk" (rect 896 392 910 409)(font "Intel Clear" ))
-	(pt 872 408)
-	(pt 952 408)
-)
-(connector
-	(text "resetN" (rect 896 408 929 420)(font "Arial" ))
-	(pt 872 424)
-	(pt 952 424)
-)
-(connector
-	(text "pixelX[10..0]" (rect 890 424 950 436)(font "Arial" ))
-	(pt 856 440)
-	(pt 952 440)
-	(bus)
-)
-(connector
-	(text "pixelY[10..0]" (rect 890 440 952 452)(font "Arial" ))
-	(pt 856 456)
-	(pt 952 456)
-	(bus)
-)
-(connector
-	(text "SmileyTLY[10..0]" (rect 810 472 891 489)(font "Intel Clear" ))
-	(pt 792 488)
-	(pt 952 488)
-	(bus)
-)
-(connector
 	(text "smileyDR" (rect 1642 360 1688 377)(font "Intel Clear" ))
 	(pt 1496 376)
 	(pt 1736 376)
@@ -898,12 +789,6 @@ agreement for further details.
 	(text "smileyRGB[7..0]" (rect 1641 376 1717 393)(font "Intel Clear" ))
 	(pt 1496 392)
 	(pt 1736 392)
-	(bus)
-)
-(connector
-	(text "SmileyTLX[10..0]" (rect 812 456 893 473)(font "Intel Clear" ))
-	(pt 792 472)
-	(pt 952 472)
 	(bus)
 )
 (connector
@@ -918,8 +803,280 @@ agreement for further details.
 	(pt 1624 424)
 	(bus)
 )
-(junction (pt 792 472))
-(junction (pt 792 488))
+(connector
+	(pt 400 472)
+	(pt 400 464)
+)
+(connector
+	(pt 392 472)
+	(pt 400 472)
+)
+(connector
+	(pt 400 464)
+	(pt 552 464)
+)
+(connector
+	(pt 408 488)
+	(pt 408 480)
+)
+(connector
+	(pt 392 488)
+	(pt 408 488)
+)
+(connector
+	(pt 408 480)
+	(pt 552 480)
+)
+(connector
+	(pt 416 504)
+	(pt 416 496)
+)
+(connector
+	(pt 392 504)
+	(pt 416 504)
+)
+(connector
+	(pt 416 496)
+	(pt 552 496)
+)
+(connector
+	(pt 424 520)
+	(pt 424 512)
+)
+(connector
+	(pt 392 520)
+	(pt 424 520)
+)
+(connector
+	(pt 424 512)
+	(pt 552 512)
+)
+(connector
+	(pt 432 536)
+	(pt 432 528)
+)
+(connector
+	(pt 392 536)
+	(pt 432 536)
+)
+(connector
+	(pt 432 528)
+	(pt 552 528)
+)
+(connector
+	(pt 440 552)
+	(pt 440 544)
+)
+(connector
+	(pt 392 552)
+	(pt 440 552)
+)
+(connector
+	(pt 440 544)
+	(pt 552 544)
+)
+(connector
+	(pt 448 568)
+	(pt 448 560)
+)
+(connector
+	(pt 392 568)
+	(pt 448 568)
+)
+(connector
+	(pt 448 560)
+	(pt 552 560)
+)
+(connector
+	(pt 456 584)
+	(pt 456 576)
+)
+(connector
+	(pt 392 584)
+	(pt 456 584)
+)
+(connector
+	(pt 456 576)
+	(pt 552 576)
+)
+(connector
+	(pt 464 600)
+	(pt 464 592)
+)
+(connector
+	(pt 392 600)
+	(pt 464 600)
+)
+(connector
+	(pt 464 592)
+	(pt 552 592)
+)
+(connector
+	(pt 880 496)
+	(pt 792 496)
+	(bus)
+)
+(connector
+	(pt 880 664)
+	(pt 880 496)
+	(bus)
+)
+(connector
+	(pt 144 824)
+	(pt 144 608)
+	(bus)
+)
+(connector
+	(pt 144 608)
+	(pt 552 608)
+	(bus)
+)
+(connector
+	(pt 472 632)
+	(pt 472 624)
+)
+(connector
+	(pt 400 632)
+	(pt 472 632)
+)
+(connector
+	(pt 472 624)
+	(pt 552 624)
+)
+(connector
+	(pt 480 648)
+	(pt 480 640)
+)
+(connector
+	(pt 392 648)
+	(pt 480 648)
+)
+(connector
+	(pt 480 640)
+	(pt 552 640)
+)
+(connector
+	(pt 488 664)
+	(pt 488 656)
+)
+(connector
+	(pt 392 664)
+	(pt 488 664)
+)
+(connector
+	(pt 488 656)
+	(pt 552 656)
+)
+(connector
+	(pt 496 680)
+	(pt 496 672)
+	(bus)
+)
+(connector
+	(pt 408 680)
+	(pt 496 680)
+	(bus)
+)
+(connector
+	(pt 496 672)
+	(pt 552 672)
+	(bus)
+)
+(connector
+	(pt 1256 408)
+	(pt 1248 408)
+	(bus)
+)
+(connector
+	(pt 1256 424)
+	(pt 1240 424)
+	(bus)
+)
+(connector
+	(pt 1256 440)
+	(pt 1232 440)
+)
+(connector
+	(pt 1248 408)
+	(pt 1248 400)
+	(bus)
+)
+(connector
+	(pt 1240 424)
+	(pt 1240 416)
+	(bus)
+)
+(connector
+	(pt 1232 440)
+	(pt 1232 432)
+)
+(connector
+	(text "clk" (rect 872 384 886 401)(font "Intel Clear" ))
+	(pt 848 400)
+	(pt 928 400)
+)
+(connector
+	(text "resetN" (rect 872 400 905 412)(font "Arial" ))
+	(pt 848 416)
+	(pt 928 416)
+)
+(connector
+	(text "pixelX[10..0]" (rect 866 416 926 428)(font "Arial" ))
+	(pt 832 432)
+	(pt 928 432)
+	(bus)
+)
+(connector
+	(text "pixelY[10..0]" (rect 866 432 928 444)(font "Arial" ))
+	(pt 832 448)
+	(pt 928 448)
+	(bus)
+)
+(connector
+	(text "SmileyTLX[10..0]" (rect 796 448 877 465)(font "Intel Clear" ))
+	(pt 792 464)
+	(pt 928 464)
+	(bus)
+)
+(connector
+	(text "SmileyTLY[10..0]" (rect 794 464 875 481)(font "Intel Clear" ))
+	(pt 792 480)
+	(pt 928 480)
+	(bus)
+)
+(connector
+	(text "smileyOffsetX[10..0]" (rect 1149 384 1246 401)(font "Intel Clear" ))
+	(pt 1152 400)
+	(pt 1248 400)
+	(bus)
+)
+(connector
+	(text "smileyOffsety[10..0]" (rect 1146 400 1242 417)(font "Intel Clear" ))
+	(pt 1152 416)
+	(pt 1240 416)
+	(bus)
+)
+(connector
+	(text "smileyRecDR" (rect 1160 416 1223 433)(font "Intel Clear" ))
+	(pt 1152 432)
+	(pt 1232 432)
+)
+(connector
+	(pt 928 496)
+	(pt 920 496)
+)
+(connector
+	(pt 920 496)
+	(pt 920 520)
+)
+(connector
+	(pt 920 520)
+	(pt 896 520)
+)
+(connector
+	(pt 896 520)
+	(pt 896 504)
+)
 (text "  " (rect 24 624 31 643)(font "Intel Clear" (font_size 8)))
 (text "   " (rect 144 664 154 683)(font "Intel Clear" (font_size 8)))
 (text "            " (rect 504 608 546 627)(font "Intel Clear" (font_size 8)))
