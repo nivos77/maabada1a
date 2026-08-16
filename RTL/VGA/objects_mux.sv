@@ -25,6 +25,7 @@ module objects_mux (
 					input		logic	[7:0] backGroundRGB,
 					input		logic	BGDrawingRequest,
 					input		logic	[7:0] RGB_MIF,
+					input       logic show_player,
 					
 					
 					output	logic	[7:0] RGBOut
@@ -37,7 +38,7 @@ begin
 	end
 	
 	else begin
-		if (smileyDrawingRequest == 1'b1)   
+		if (smileyDrawingRequest == 1'b1 && show_player == 1'b1)   
 			RGBOut <= smileyRGB;
 			
 		else if (bodyDrawingRequest == 1'b1)
@@ -59,7 +60,7 @@ begin
 			RGBOut <= hartRGB;
 			
 		else if (BGDrawingRequest == 1'b1)
-			RGBOut <= RGB_MIF;
+			RGBOut <= backGroundRGB;
 			
 		else 
 			RGBOut <= RGB_MIF;

@@ -339,6 +339,13 @@ agreement for further details.
 		(text "snake_length[4..0]" (rect 202 347 275 359)(font "Arial" ))
 		(line (pt 296 352)(pt 280 352)(line_width 3))
 	)
+	(port
+		(pt 296 368)
+		(output)
+		(text "show_player" (rect 0 0 50 12)(font "Arial" ))
+		(text "show_player" (rect 225 363 275 375)(font "Arial" ))
+		(line (pt 296 368)(pt 280 368)(line_width 1))
+	)
 	(drawing
 		(rectangle (rect 16 16 280 416)(line_width 1))
 	)

@@ -1,5 +1,5 @@
 
-module AppleBitMap (   
+module bodyBitMap (   
                     input  logic clk,
                     input  logic resetN,
                     input  logic [10:0] offsetX,
@@ -27,7 +27,7 @@ lpm_rom #(
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(10),
     .LPM_NUMWORDS(1024),
-    .LPM_FILE("RTL/apple.mif"),
+    .LPM_FILE("RTL/body.mif"),
     .LPM_TYPE               ("LPM_ROM"),
     .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
     .LPM_OUTDATA            ("UNREGISTERED"), 

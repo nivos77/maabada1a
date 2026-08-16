@@ -117,7 +117,7 @@ module game_controller (
     int apple_timer;  
     int special_timer; 
     int portal_timer; 
-    logic [5:0] blink_timer;
+    int [5:0] blink_timer;
     const int SPECIAL_MAX_TIME = 600; 
     const int PORTAL_MAX_TIME = 900; 
     const int WIN_SCORE_THRESHOLD = 170; 
@@ -327,11 +327,8 @@ module game_controller (
                     else begin
                         show_player <= 1'b1;
                         blink_timer <= 0;
-                        reset_player_pos <= 1;
-                        if(action_key) begin
-                            state <= PLAY_ST;
-                        end
-
+                        reset_player_pos <= 0;
+                        state <= PLAY_ST;
                     end
                 end
 

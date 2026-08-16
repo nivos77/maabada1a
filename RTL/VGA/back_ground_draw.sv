@@ -9,7 +9,7 @@ module  back_ground_draw    (
                     input   logic   [10:0]  pixelY,
                     input   logic   [18:0]  address,
                     
-                    input   logic   night_mode_active, // NEW: Night mode signal from FSM
+                    input   logic   night_mode_active, 
 
                     output  logic   [7:0]   BG_RGB,
                     output  logic       boardersDrawReq, 
@@ -56,58 +56,46 @@ parameter  logic [10:0] COLOR_MATRIX_LEFT_X = 100 ;
     .q(MIF_VGA)
 );
 
+logic [9:0] fence_address;
+logic [7:0] fence_color;
+logic is_side_wall;
+assign is_side_wall = (pixelX < 32) || ((pixelX >= 608) && (pixelY < 448));
+
+assign fence_address = is_side_wall ? {pixelX[4:0], pixelY[4:0]} : {pixelY[4:0], pixelX[4:0]};//visual wall rotation
+lpm_rom #(
+    .LPM_WIDTH(8),
+    .LPM_WIDTHAD(10),  
+    .LPM_NUMWORDS(1024),
+    .LPM_FILE("RTL/bottomWall.mif"), 
+    .LPM_TYPE               ("LPM_ROM"),
+    .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
+    .LPM_OUTDATA            ("UNREGISTERED"), 
+    .AUTO_CARRY_CHAINS      ("ON"),
+    .AUTO_CASCADE_BUFFERS   ("ON"),
+    .INTENDED_DEVICE_FAMILY ("Cyclone V")  
+) rom_inst_fence (
+    .address(fence_address),
+    .inclock(clk),
+    .q(fence_color)
+);
+
+localparam logic [7:0] TRANSPARENT_ENCODING = 8'hFF;
+
 always_ff@(posedge clk or negedge resetN)
 begin
     if(!resetN) begin
-        redBits <= DARK_COLOR ; 
-        greenBits <= DARK_COLOR  ;  
-        blueBits <= DARK_COLOR[1:0] ;   
+        BG_RGB <= 8'h00;
+        boardersDrawReq <= 1'b0;
     end 
     else begin
-
-        // defaults 
-        greenBits <= 3'b111 ; 
-        redBits <= 3'b000 ;
-        blueBits <= 2'b11;//LIGHT_COLOR;
-        boardersDrawReq <=  1'b0 ; 
-        
-        // --- NIGHT MODE LOGIC ---
-        // If night mode is active, make the background completely black (or very dark)
-        if (night_mode_active) begin
-            greenBits <= 3'b000;
-            redBits   <= 3'b000;
-            blueBits  <= 2'b00;
-        end
-        // ------------------------
-
-        if (   
-        // 1. draw the yellow borders
-                        ((pixelX <= bracketOffset) && (pixelX >=(bracketOffset- bracketOffset/4))) ||
-                        ((pixelY <= bracketOffset) && (pixelY >= (bracketOffset- bracketOffset/4))) ||
-                        
-        // 2. draw four lines with "bracketOffset" offset from the border 
-                        ((pixelX >= (xFrameSize-bracketOffset))&&(pixelX <= (xFrameSize-(bracketOffset- bracketOffset/4)))) || 
-                        ((pixelY >= (yFrameSize-bracketOffset))&&(pixelY <= (yFrameSize-(bracketOffset- bracketOffset/4))))) 
-            begin 
-                    redBits <= LIGHT_COLOR ;    
-                    greenBits <= DARK_COLOR  ;  
-                    blueBits <= DARK_COLOR[1:0] ;
-                     boardersDrawReq <=     1'b1;
+        BG_RGB <= 8'h00;
+        boardersDrawReq <= 1'b0;
+        if ((pixelX < 32) || (pixelX >= 608) || (pixelY >= 448)) begin
+            if (fence_color != TRANSPARENT_ENCODING) begin
+                BG_RGB <= fence_color;
+                boardersDrawReq <= 1'b1;
             end
-    
-        // 3. draw a matrix of 16*16 rectangles with all the colors, each rectsangle 8*8 pixels     
-        if (( pixelY > 4 ) && (pixelY < 20 ) && (pixelX >30 )&& (pixelX <542 ) && !night_mode_active) // Only draw if NOT night mode
-         begin
-               shift_pixelX<= pixelX-11'd29;
-
-                 blueBits <= shift_pixelX[8:7] ; 
-                 greenBits <= shift_pixelX[3:1] ; 
-                 redBits <= shift_pixelX[6:4];       
-                 boardersDrawReq <=     1'b1;
-         end 
-        
-    BG_RGB <=  { blueBits, redBits, greenBits } ; //collect color nibbles to an 8 bit word      
-
+        end
     end;    
 end 
 endmodule

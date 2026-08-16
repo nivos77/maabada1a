@@ -17,14 +17,13 @@ module snake_body #(
     input logic shift_pulse,
     input logic [4:0] body_length,
 
-    // outputs to bodyBitMap
-    
-    output logic [10:0] offsetX,
-    output logic [10:0] offsetY,
-	 output logic InsideRectangle
+    //object_mux outputs
+    output logic bodyDrawingRequest,
+    output logic [7:0] bodyRGB
 );
 
-    
+    localparam logic [7:0] BODY_COLOR = 8'b000_111_00;//deafult body color is green
+    localparam logic [7:0] TRANSPARENT = 8'hFF;
     logic [10:0] body_X [0:MAX_LENGTH-1];
     logic [10:0] body_Y [0:MAX_LENGTH-1];
 
@@ -46,19 +45,18 @@ module snake_body #(
     end
 
         //drawing logic - checks if the current pixel is within any of the body segments
+    logic body_pixel;
     always_comb begin
-        InsideRectangle = 1'b0;
-        offsetX = 0;
-        offsetY = 0;
-        for(int i = 0; i < MAX_LENGTH; i++) begin
+        body_pixel = 1'b0;
+        for(int i = 1; i < MAX_LENGTH; i++) begin
             if(i <body_length) begin
             if((pixelX >= body_X[i]) && (pixelX < body_X[i] + OBJECT_SIZE) &&
                (pixelY >= body_Y[i]) && (pixelY < body_Y[i] + OBJECT_SIZE)) begin
-                InsideRectangle = 1'b1;
-                offsetX = pixelX - body_X[i];
-                offsetY = pixelY - body_Y[i];
+                body_pixel = 1'b1;
             end
         end
     end
 end
+    assign bodyDrawingRequest = body_pixel;
+    assign bodyRGB = body_pixel ? BODY_COLOR : TRANSPARENT;
 endmodule

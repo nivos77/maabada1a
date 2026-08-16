@@ -52,14 +52,14 @@ parameter int PORTAL2_Y = 300;
 const logic signed  [10:0]  FIXED_POINT_MULTIPLIER = 64; 
 
 // movement limits 
-const int   OBJECT_WIDTH_X = 16;
-const int   OBJECT_HIGHT_Y = 16;
+const int   OBJECT_WIDTH_X = 32;
+const int   OBJECT_HIGHT_Y = 32;
 const int   SafetyMargin   = 2;
 
 const int   x_FRAME_LEFT    = (SafetyMargin)* FIXED_POINT_MULTIPLIER; 
-const int   x_FRAME_RIGHT   = (639 - SafetyMargin - OBJECT_WIDTH_X)* FIXED_POINT_MULTIPLIER; 
+const int   x_FRAME_RIGHT   = (608 - SafetyMargin - OBJECT_WIDTH_X)* FIXED_POINT_MULTIPLIER; 
 const int   y_FRAME_TOP     = (SafetyMargin) * FIXED_POINT_MULTIPLIER;
-const int   y_FRAME_BOTTOM  = (479 - SafetyMargin - OBJECT_HIGHT_Y ) * FIXED_POINT_MULTIPLIER; 
+const int   y_FRAME_BOTTOM  = (448 - SafetyMargin - OBJECT_HIGHT_Y ) * FIXED_POINT_MULTIPLIER; 
 
 //directional consts
 const logic [1:0] DIR_RIGHT = 2'b00;
@@ -75,11 +75,14 @@ enum  logic [2:0] {IDLE_ST,          // initial state
                          POSITION_LIMITS_ST // check if inside the frame  
                         }  SM_Motion ;
 
-int Xspeed ; // speed   
-int Yspeed ; 
+// int Xspeed ; // speed   
+// int Yspeed ; 
 int Xposition ; //position   
 int Yposition ;  
-int current_speed;
+//int current_speed;
+logic [1:0] next_direction; // Input buffer!
+logic shift_pending;
+//logic turn_lock; //lock reverse direction until next 32px shift pulse
 logic [4:0] hit_reg = 5'b00000;
  
 always_ff @(posedge clk or negedge resetN)
@@ -87,22 +90,30 @@ begin : fsm_sync_proc
 
     if (resetN == 1'b0) begin 
         SM_Motion <= IDLE_ST ; 
-        Xspeed <= 0 ; 
-        Yspeed <= 0 ; 
+        // Xspeed <= 0 ; 
+        // Yspeed <= 0 ; 
         Xposition <= INITIAL_X * FIXED_POINT_MULTIPLIER ; 
         Yposition <= INITIAL_Y * FIXED_POINT_MULTIPLIER ; 
         hit_reg <= 5'b0 ;   
+        direction <= DIR_RIGHT;
+        next_direction <= DIR_RIGHT;
+        shift_pending <= 1'b0;
+        // turn_lock <= 1'b0;
     end     
     
     else begin
+
+        if (shift_pulse) begin
+            shift_pending <= 1'b1;
+        end
     
         case(SM_Motion)
         
         //------------
             IDLE_ST: begin
         //------------
-                Xspeed  <= 0 ; 
-                Yspeed  <= 0 ; 
+                // Xspeed  <= 0 ; 
+                //Yspeed  <= 0 ; 
                 Xposition <= INITIAL_X * FIXED_POINT_MULTIPLIER; 
                 Yposition <= INITIAL_Y * FIXED_POINT_MULTIPLIER; 
 
@@ -115,43 +126,68 @@ begin : fsm_sync_proc
         //------------
         
                 // Convert FSM speed (16 down to 4) to actual pixel velocity (80 up to 200)
-                current_speed = (turbo) ? ((24 - move_speed) * 20) : ((24 - move_speed) * 10);
-                    
-                if (up_key) begin
-                    if(direction != DIR_DOWN) begin 
-                        direction <= DIR_UP;
-                        Yspeed <= -current_speed;
-                        Xspeed <= 0;
-                    end
+                //current_speed = (turbo) ? ((24 - move_speed) * 20) : ((24 - move_speed) * 10);
+
+                // if (shift_pulse) begin
+                //     turn_lock <= 1'b0;
+                // end
+                // else if (up_key) begin
+                //     if ((direction != DIR_DOWN) && !(turn_lock && (direction == DIR_DOWN))) begin
+                //         direction <= DIR_UP;
+                //         // Yspeed <= -current_speed;
+                //         // Xspeed <= 0;
+                //         if (direction != DIR_UP)
+                //             turn_lock <= 1'b1;
+                //     end
+                // end
+                // else if (down_key) begin
+                //     if ((direction != DIR_UP) && !(turn_lock && (direction == DIR_UP))) begin
+                //         direction <= DIR_DOWN;
+                //         // Yspeed <= current_speed;
+                //         // Xspeed <= 0;
+                //         if (direction != DIR_DOWN)
+                //             turn_lock <= 1'b1;
+                //     end
+                // end
+                // else if (left_key) begin
+                //     if ((direction != DIR_RIGHT) && !(turn_lock && (direction == DIR_RIGHT))) begin
+                //         direction <= DIR_LEFT;
+                //         // Xspeed <= -current_speed;
+                //         // Yspeed <= 0;
+                //         if (direction != DIR_LEFT)
+                //             turn_lock <= 1'b1;
+                //     end
+                // end
+                // else if (right_key) begin
+                //     if ((direction != DIR_LEFT) && !(turn_lock && (direction == DIR_LEFT))) begin
+                //         direction <= DIR_RIGHT;
+                //         // Xspeed <= current_speed;
+                //         // Yspeed <= 0;
+                //         if (direction != DIR_RIGHT)
+                //             turn_lock <= 1'b1;
+                //     end
+                // end
+                if (up_key && (direction != DIR_DOWN)) begin
+                    next_direction <= DIR_UP;
                 end
-                else if (down_key) begin
-                    if(direction != DIR_UP) begin 
-                        direction <= DIR_DOWN;
-                        Yspeed <= current_speed;
-                        Xspeed <= 0;
-                    end
+                else if (down_key && (direction != DIR_UP)) begin
+                    next_direction <= DIR_DOWN;
                 end
-                else if (left_key) begin
-                    if(direction != DIR_RIGHT) begin
-                        direction <= DIR_LEFT;
-                        Xspeed <= -current_speed;
-                        Yspeed <= 0;
-                    end
+                else if (left_key && (direction != DIR_RIGHT)) begin
+                    next_direction <= DIR_LEFT;
                 end
-                else if (right_key) begin
-                    if(direction != DIR_LEFT) begin
-                        direction <= DIR_RIGHT;
-                        Xspeed <= current_speed;
-                        Yspeed <= 0;
-                    end
-                end
+                else if (right_key && (direction != DIR_LEFT)) begin
+                    next_direction <= DIR_RIGHT;
+                end 
 
                 if (collision) begin
                     hit_reg[HitEdgeCode] <= 1'b1;
                 end
                 
-                if (startOfFrame)
+                if (startOfFrame)begin
                     SM_Motion <= START_OF_FRAME_ST ; 
+                end
+                
         end 
         
         //------------
@@ -169,8 +205,11 @@ begin : fsm_sync_proc
                 if (reset_player_pos) begin
                     Xposition <= INITIAL_X * FIXED_POINT_MULTIPLIER;
                     Yposition <= INITIAL_Y * FIXED_POINT_MULTIPLIER;
-                    Xspeed <= 0;
-                    Yspeed <= 0;
+                    direction <= DIR_RIGHT;
+                    next_direction <= DIR_RIGHT;
+                    shift_pending <= 1'b0;
+                    // Xspeed <= 0;
+                    // Yspeed <= 0;
                 end
                 else if (teleport_to_p1) begin
                     Xposition <= PORTAL1_X * FIXED_POINT_MULTIPLIER;
@@ -180,10 +219,20 @@ begin : fsm_sync_proc
                     Xposition <= PORTAL2_X * FIXED_POINT_MULTIPLIER;
                     Yposition <= PORTAL2_Y * FIXED_POINT_MULTIPLIER;
                 end
-                else begin
+                else if (shift_pending) begin
+                    shift_pending <= 1'b0;
+                    direction <= next_direction;
+                    if (next_direction == DIR_UP) 
+                        Yposition <= Yposition - (32 * FIXED_POINT_MULTIPLIER);
+                    else if (next_direction == DIR_DOWN) 
+                        Yposition <= Yposition + (32 * FIXED_POINT_MULTIPLIER);
+                    else if (next_direction == DIR_LEFT) 
+                        Xposition <= Xposition - (32 * FIXED_POINT_MULTIPLIER);
+                    else if (next_direction == DIR_RIGHT) 
+                        Xposition <= Xposition + (32 * FIXED_POINT_MULTIPLIER);
                     // Normal movement
-                    Xposition <= Xposition + Xspeed ; 
-                    Yposition <= Yposition + Yspeed ;
+                    // Xposition <= Xposition + Xspeed ; 
+                    // Yposition <= Yposition + Yspeed ;
                 end
              
                 SM_Motion <= POSITION_LIMITS_ST ; 
@@ -194,19 +243,19 @@ begin : fsm_sync_proc
         
                 if (Xposition < x_FRAME_LEFT) begin
                     Xposition <= x_FRAME_LEFT ; 
-                    Xspeed <= 0; 
+                    // Xspeed <= 0; 
                 end
                 if (Xposition > x_FRAME_RIGHT) begin
                     Xposition <= x_FRAME_RIGHT ; 
-                    Xspeed <= 0;
+                    // Xspeed <= 0;
                 end
                 if (Yposition < y_FRAME_TOP) begin
                     Yposition <= y_FRAME_TOP ; 
-                    Yspeed <= 0;
+                    // Yspeed <= 0;
                 end
                 if (Yposition > y_FRAME_BOTTOM) begin
                     Yposition <= y_FRAME_BOTTOM ; 
-                    Yspeed <= 0;
+                    // Yspeed <= 0;
                 end
 
                 SM_Motion <= MOVE_ST ; 

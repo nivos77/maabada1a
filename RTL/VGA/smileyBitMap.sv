@@ -74,7 +74,7 @@ lpm_rom #(
     .LPM_WIDTH(8),
     .LPM_WIDTHAD(10),
     .LPM_NUMWORDS(1024),
-    .LPM_FILE("RTL/snake.mif"),
+    .LPM_FILE("RTL/snake2.mif"),
     .LPM_TYPE               ("LPM_ROM"),
     .LPM_ADDRESS_CONTROL    ("REGISTERED"), 
     .LPM_OUTDATA            ("UNREGISTERED"), 

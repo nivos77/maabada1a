@@ -158,6 +158,13 @@ agreement for further details.
 		(line (pt 0 320)(pt 16 320)(line_width 3))
 	)
 	(port
+		(pt 0 336)
+		(input)
+		(text "show_player" (rect 0 0 50 12)(font "Arial" ))
+		(text "show_player" (rect 21 331 71 343)(font "Arial" ))
+		(line (pt 0 336)(pt 16 336)(line_width 1))
+	)
+	(port
 		(pt 248 32)
 		(output)
 		(text "RGBOut[7..0]" (rect 0 0 55 12)(font "Arial" ))
