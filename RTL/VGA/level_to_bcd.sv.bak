@@ -1,0 +1,10 @@
+module level_to_bcd (
+    input  logic [7:0] level_in,
+    output logic [3:0] tens,
+    output logic [3:0] ones
+);
+    always_comb begin
+        tens = (level_in / 10) % 10;
+        ones = level_in % 10;
+    end
+endmodule

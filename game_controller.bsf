@@ -62,8 +62,8 @@ agreement for further details.
 	(port
 		(pt 0 112)
 		(input)
-		(text "drawing_request_number" (rect 0 0 101 12)(font "Arial" ))
-		(text "drawing_request_number" (rect 21 107 122 119)(font "Arial" ))
+		(text "drawing_request_tail" (rect 0 0 80 12)(font "Arial" ))
+		(text "drawing_request_tail" (rect 21 107 101 119)(font "Arial" ))
 		(line (pt 0 112)(pt 16 112)(line_width 1))
 	)
 	(port
@@ -104,8 +104,8 @@ agreement for further details.
 	(port
 		(pt 0 208)
 		(input)
-		(text "special_type_in[1..0]" (rect 0 0 80 12)(font "Arial" ))
-		(text "special_type_in[1..0]" (rect 21 203 101 215)(font "Arial" ))
+		(text "special_type_in[3..0]" (rect 0 0 81 12)(font "Arial" ))
+		(text "special_type_in[3..0]" (rect 21 203 102 215)(font "Arial" ))
 		(line (pt 0 208)(pt 16 208)(line_width 3))
 	)
 	(port
@@ -335,8 +335,8 @@ agreement for further details.
 	(port
 		(pt 296 352)
 		(output)
-		(text "snake_length[4..0]" (rect 0 0 73 12)(font "Arial" ))
-		(text "snake_length[4..0]" (rect 202 347 275 359)(font "Arial" ))
+		(text "snake_length[7..0]" (rect 0 0 71 12)(font "Arial" ))
+		(text "snake_length[7..0]" (rect 204 347 275 359)(font "Arial" ))
 		(line (pt 296 352)(pt 280 352)(line_width 3))
 	)
 	(port
@@ -345,6 +345,13 @@ agreement for further details.
 		(text "show_player" (rect 0 0 50 12)(font "Arial" ))
 		(text "show_player" (rect 225 363 275 375)(font "Arial" ))
 		(line (pt 296 368)(pt 280 368)(line_width 1))
+	)
+	(port
+		(pt 296 384)
+		(output)
+		(text "countdown_val[1..0]" (rect 0 0 77 12)(font "Arial" ))
+		(text "countdown_val[1..0]" (rect 198 379 275 391)(font "Arial" ))
+		(line (pt 296 384)(pt 280 384)(line_width 3))
 	)
 	(drawing
 		(rectangle (rect 16 16 280 416)(line_width 1))

@@ -76,58 +76,65 @@ agreement for further details.
 	(port
 		(pt 0 144)
 		(input)
-		(text "turbo" (rect 0 0 20 12)(font "Arial" ))
-		(text "turbo" (rect 21 139 41 151)(font "Arial" ))
+		(text "reset_player_pos" (rect 0 0 70 12)(font "Arial" ))
+		(text "reset_player_pos" (rect 21 139 91 151)(font "Arial" ))
 		(line (pt 0 144)(pt 16 144)(line_width 1))
 	)
 	(port
 		(pt 0 160)
 		(input)
-		(text "collision" (rect 0 0 28 12)(font "Arial" ))
-		(text "collision" (rect 21 155 49 167)(font "Arial" ))
+		(text "teleport_to_p1" (rect 0 0 55 12)(font "Arial" ))
+		(text "teleport_to_p1" (rect 21 155 76 167)(font "Arial" ))
 		(line (pt 0 160)(pt 16 160)(line_width 1))
 	)
 	(port
 		(pt 0 176)
 		(input)
-		(text "HitEdgeCode[2..0]" (rect 0 0 73 12)(font "Arial" ))
-		(text "HitEdgeCode[2..0]" (rect 21 171 94 183)(font "Arial" ))
-		(line (pt 0 176)(pt 16 176)(line_width 3))
+		(text "teleport_to_p2" (rect 0 0 56 12)(font "Arial" ))
+		(text "teleport_to_p2" (rect 21 171 77 183)(font "Arial" ))
+		(line (pt 0 176)(pt 16 176)(line_width 1))
 	)
 	(port
 		(pt 0 192)
 		(input)
-		(text "reset_player_pos" (rect 0 0 70 12)(font "Arial" ))
-		(text "reset_player_pos" (rect 21 187 91 199)(font "Arial" ))
-		(line (pt 0 192)(pt 16 192)(line_width 1))
+		(text "move_speed[31..0]" (rect 0 0 76 12)(font "Arial" ))
+		(text "move_speed[31..0]" (rect 21 187 97 199)(font "Arial" ))
+		(line (pt 0 192)(pt 16 192)(line_width 3))
 	)
 	(port
 		(pt 0 208)
 		(input)
-		(text "teleport_to_p1" (rect 0 0 55 12)(font "Arial" ))
-		(text "teleport_to_p1" (rect 21 203 76 215)(font "Arial" ))
+		(text "shift_pulse" (rect 0 0 42 12)(font "Arial" ))
+		(text "shift_pulse" (rect 21 203 63 215)(font "Arial" ))
 		(line (pt 0 208)(pt 16 208)(line_width 1))
 	)
 	(port
 		(pt 0 224)
 		(input)
-		(text "teleport_to_p2" (rect 0 0 56 12)(font "Arial" ))
-		(text "teleport_to_p2" (rect 21 219 77 231)(font "Arial" ))
-		(line (pt 0 224)(pt 16 224)(line_width 1))
+		(text "portal1_x[10..0]" (rect 0 0 59 12)(font "Arial" ))
+		(text "portal1_x[10..0]" (rect 21 219 80 231)(font "Arial" ))
+		(line (pt 0 224)(pt 16 224)(line_width 3))
 	)
 	(port
 		(pt 0 240)
 		(input)
-		(text "move_speed[31..0]" (rect 0 0 76 12)(font "Arial" ))
-		(text "move_speed[31..0]" (rect 21 235 97 247)(font "Arial" ))
+		(text "portal1_y[10..0]" (rect 0 0 60 12)(font "Arial" ))
+		(text "portal1_y[10..0]" (rect 21 235 81 247)(font "Arial" ))
 		(line (pt 0 240)(pt 16 240)(line_width 3))
 	)
 	(port
 		(pt 0 256)
 		(input)
-		(text "shift_pulse" (rect 0 0 42 12)(font "Arial" ))
-		(text "shift_pulse" (rect 21 251 63 263)(font "Arial" ))
-		(line (pt 0 256)(pt 16 256)(line_width 1))
+		(text "portal2_x[10..0]" (rect 0 0 60 12)(font "Arial" ))
+		(text "portal2_x[10..0]" (rect 21 251 81 263)(font "Arial" ))
+		(line (pt 0 256)(pt 16 256)(line_width 3))
+	)
+	(port
+		(pt 0 272)
+		(input)
+		(text "portal2_y[10..0]" (rect 0 0 61 12)(font "Arial" ))
+		(text "portal2_y[10..0]" (rect 21 267 82 279)(font "Arial" ))
+		(line (pt 0 272)(pt 16 272)(line_width 3))
 	)
 	(port
 		(pt 240 32)
@@ -152,32 +159,12 @@ agreement for further details.
 	)
 	(parameter
 		"INITIAL_X"
-		"280"
+		"320"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(parameter
 		"INITIAL_Y"
-		"185"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"PORTAL1_X"
-		"100"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"PORTAL1_Y"
-		"100"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"PORTAL2_X"
-		"500"
-		""
-		(type "PARAMETER_SIGNED_DEC")	)
-	(parameter
-		"PORTAL2_Y"
-		"300"
+		"256"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing

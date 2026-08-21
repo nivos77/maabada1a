@@ -55,6 +55,7 @@ begin
 	end 
 end
 
+
 assign RGBout = digit_color;
 
 endmodule

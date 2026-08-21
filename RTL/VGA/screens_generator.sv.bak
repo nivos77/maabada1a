@@ -1,0 +1,129 @@
+module screens_generator (
+    input  logic clk,
+    input  logic resetN,
+    input  logic [10:0] pixelX,
+    input  logic [10:0] pixelY,
+    input  logic [2:0] game_state_out,
+
+    output logic screenDR,
+    output logic [7:0] screenRGB
+);
+
+    localparam INIT_ST      = 3'b000;
+    localparam GAME_OVER_ST = 3'b011;
+    localparam WIN_ST       = 3'b100;
+
+    logic [24:0] blink_cnt;
+    always_ff @(posedge clk or negedge resetN) begin
+        if (!resetN) blink_cnt <= 0;
+        else blink_cnt <= blink_cnt + 1;
+    end
+    logic blink;
+    assign blink = blink_cnt[24];
+
+    logic [4:0] sy, ey, oy, wy;
+    logic [5:0] sx, ex, ox, wx;
+
+    assign sy = (pixelY >= 100 && pixelY < 180) ? ((pixelY - 100) >> 4) : 5;
+    assign sx = (pixelX >= 40  && pixelX < 600) ? ((pixelX - 40)  >> 4) : 63;
+
+    assign ey = (pixelY >= 350 && pixelY < 390) ? ((pixelY - 350) >> 3) : 5;
+    assign ex = (pixelX >= 56  && pixelX < 584) ? ((pixelX - 56)  >> 3) : 63;
+
+    assign oy = (pixelY >= 200 && pixelY < 240) ? ((pixelY - 200) >> 3) : 5;
+    assign ox = (pixelX >= 80  && pixelX < 560) ? ((pixelX - 80)  >> 3) : 63;
+
+    assign wy = (pixelY >= 200 && pixelY < 240) ? ((pixelY - 200) >> 3) : 5;
+    assign wx = (pixelX >= 128 && pixelX < 512) ? ((pixelX - 128) >> 3) : 63;
+
+    logic [0:34] snake_row;
+    logic [0:65] enter_row;
+    logic [0:59] over_row;
+    logic [0:47] win_row;
+
+    always_comb begin
+        // SNAKE
+        case (sy)
+            0: snake_row = 35'b01110_0_10001_0_01110_0_10001_0_11111;
+            1: snake_row = 35'b10000_0_11001_0_10001_0_10100_0_10000;
+            2: snake_row = 35'b01110_0_10101_0_11111_0_11000_0_11110;
+            3: snake_row = 35'b00001_0_10011_0_10001_0_10100_0_10000;
+            4: snake_row = 35'b01110_0_10001_0_10001_0_10001_0_11111;
+            default: snake_row = 35'b0;
+        endcase
+        
+        // PRESS ENTER
+        case (ey)
+            0: enter_row = 66'b11110_0_11110_0_11111_0_01110_0_01110_00_11111_0_10001_0_11111_0_11111_0_11110;
+            1: enter_row = 66'b10001_0_10001_0_10000_0_10000_0_10000_00_10000_0_11001_0_00100_0_10000_0_10001;
+            2: enter_row = 66'b11110_0_11110_0_11110_0_01110_0_01110_00_11110_0_10101_0_00100_0_11110_0_11110;
+            3: enter_row = 66'b10000_0_10100_0_10000_0_00001_0_00001_00_10000_0_10011_0_00100_0_10000_0_10100;
+            4: enter_row = 66'b10000_0_10010_0_11111_0_01110_0_01110_00_11111_0_10001_0_00100_0_11111_0_10010;
+            default: enter_row = 66'b0;
+        endcase
+
+        // GAME OVER
+        case (oy)
+            0: over_row = 60'b01110_0_01110_0_10001_0_11111_000_01110_0_10001_0_11111_0_11110_00;
+            1: over_row = 60'b10000_0_10001_0_11011_0_10000_000_10001_0_10001_0_10000_0_10001_00;
+            2: over_row = 60'b10111_0_11111_0_10101_0_11110_000_10001_0_10001_0_11110_0_11110_00;
+            3: over_row = 60'b10001_0_10001_0_10001_0_10000_000_10001_0_01010_0_10000_0_10100_00;
+            4: over_row = 60'b01110_0_10001_0_10001_0_11111_000_01110_0_00100_0_11111_0_10010_00;
+            default: over_row = 60'b0;
+        endcase
+
+        // YOU WIN
+        case (wy)
+            0: win_row = 48'b10001_0_01110_0_10001_000_10001_0_111_0_10001_00;
+            1: win_row = 48'b10001_0_10001_0_10001_000_10001_0_010_0_11001_00;
+            2: win_row = 48'b01010_0_10001_0_10001_000_10101_0_010_0_10101_00;
+            3: win_row = 48'b00100_0_10001_0_10001_000_11011_0_010_0_10011_00;
+            4: win_row = 48'b00100_0_01110_0_01110_000_10001_0_111_0_10001_00;
+            default: win_row = 48'b0;
+        endcase
+    end
+
+    logic draw_snake, draw_enter, draw_over, draw_win;
+    assign draw_snake = (sy < 5 && sx < 35) ? snake_row[sx] : 1'b0;
+    assign draw_enter = (ey < 5 && ex < 66) ? enter_row[ex] : 1'b0;
+    assign draw_over  = (oy < 5 && ox < 60) ? over_row[ox]  : 1'b0;
+    assign draw_win   = (wy < 5 && wx < 48) ? win_row[wx]   : 1'b0;
+
+    always_ff @(posedge clk or negedge resetN) begin
+        if (!resetN) begin
+            screenDR  <= 1'b0;
+            screenRGB <= 8'h00;
+        end
+        else begin
+            screenDR <= 1'b0; 
+
+            case (game_state_out)
+                INIT_ST: begin
+                    screenDR <= 1'b1;
+                    if (draw_snake)
+                        screenRGB <= 8'b000_111_00;
+                    else if (draw_enter && blink)
+                        screenRGB <= 8'b111_111_11;
+                    else
+                        screenRGB <= (pixelX[4] ^ pixelY[4]) ? 8'b000_010_10 : 8'b000_001_01; 
+                end
+
+                GAME_OVER_ST: begin
+                    screenDR <= 1'b1;
+                    if (draw_over)
+                        screenRGB <= 8'b111_111_00;
+                    else
+                        screenRGB <= (pixelY[2]) ? 8'b110_000_00 : 8'b010_000_00; 
+                end
+
+                WIN_ST: begin
+                    screenDR <= 1'b1;
+                    if (draw_win)
+                        screenRGB <= 8'b111_111_11;
+                    else 
+                        screenRGB <= ((pixelX + pixelY) % 32 < 16) ? 8'b000_000_10 : 8'b010_000_11;
+                end
+            endcase
+        end
+    end
+endmodule
